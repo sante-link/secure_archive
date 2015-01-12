@@ -28,7 +28,7 @@ describe SecureArchive do
       expect_any_instance_of(SecureArchive::Encryptor::Plain).to receive(:encrypt_file).with(@source_dir + 'c', @archive_dir + 'c').and_call_original
 
       archiver = SecureArchive::Archiver.new(@archive_dir)
-      archiver.archive_tree(@source_dir)
+      archiver.archive_tree(@source_dir.realpath.to_s + '/')
     end
 
     it 'updates changed files' do
@@ -45,7 +45,7 @@ describe SecureArchive do
       expect_any_instance_of(SecureArchive::Encryptor::Plain).to receive(:encrypt_file).with(@source_dir + 'c', @archive_dir + 'c').and_call_original
 
       archiver = SecureArchive::Archiver.new(@archive_dir)
-      archiver.archive_tree(@source_dir)
+      archiver.archive_tree(@source_dir.realpath.to_s + '/')
     end
 
     it 'removes deleted files' do
@@ -58,7 +58,23 @@ describe SecureArchive do
       expect(FileUtils).to receive(:rm_r).with((@archive_dir + 'c').to_s).and_call_original
 
       archiver = SecureArchive::Archiver.new(@archive_dir)
-      archiver.archive_tree(@source_dir)
+      archiver.archive_tree(@source_dir.realpath.to_s + '/')
+    end
+
+    it 'creates an additional directory without trailing slash' do
+      now = Time.now
+      FileUtils.mkdir_p(@archive_dir + @source_dir.basename)
+      FileUtils.touch(@source_dir + 'a')
+      FileUtils.touch(@source_dir + 'b', mtime: now)
+      FileUtils.touch(@archive_dir + @source_dir.basename + 'b', mtime: now)
+      FileUtils.touch(@archive_dir + @source_dir.basename + 'c', mtime: now - 20)
+
+      expect_any_instance_of(SecureArchive::Encryptor::Plain).to receive(:encrypt_file).with(@source_dir + 'a', @archive_dir + @source_dir.basename + 'a').and_call_original
+      expect_any_instance_of(SecureArchive::Encryptor::Plain).not_to receive(:encrypt_file).with(@source_dir + 'b', @archive_dir + @source_dir.basename + 'b').and_call_original
+      expect(FileUtils).to receive(:rm_r).with((@archive_dir + @source_dir.basename + 'c').to_s).and_call_original
+
+      archiver = SecureArchive::Archiver.new(@archive_dir)
+      archiver.archive_tree(@source_dir.realpath.to_s)
     end
   end
 end
