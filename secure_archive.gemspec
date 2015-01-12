@@ -8,9 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = SecureArchive::VERSION
   spec.authors       = ["Romain Tartière"]
   spec.email         = ["romain@blogreen.org"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Create encrypted directory tree archive for backing-up sensitive data.}
+  spec.homepage      = "https://github.com/sante-link/secure_archive"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
