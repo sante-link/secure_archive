@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'secure_archive'
+require 'optparse'
+require 'pathname'
+
+options = {
+  recipients: [],
+}
+
+def usage
+end
+
+opts_parser = OptionParser.new do |opts|
+  opts.banner = 'usage: gpg-archiver [options] source_directory destination_directory'
+  opts.separator('')
+  opts.separator('Available options:')
+  opts.on('-r', '--recipients=foo,bar', Array, 'Add recipients (required)') do |v|
+    options[:recipients] += v
+  end
+end
+
+opts_parser.parse!
+
+if options[:recipients].count == 0 || ARGV.count != 2 then
+  $stderr.puts opts_parser
+  exit 1
+end
+
+begin
+  archiver = SecureArchive::Archiver.new(ARGV.pop, SecureArchive::Encryptor::Gpg.new(options[:recipients]))
+  ARGV.each do |source|
+    archiver.archive_tree(source)
+  end
+rescue SecureArchive::Encryptor::Gpg::RecipientNotInKeyring => e
+  $stderr.puts e.message
+  exit 1
+end

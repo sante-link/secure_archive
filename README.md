@@ -1,10 +1,16 @@
 # SecureArchive
 
-TODO: Write a gem description
+Need to backup a tree of files but can't trust the storage?
+
+This gem provides a `gpg-archiver` command that can be used to build and
+maintain an encrypted copy of a directory tree using
+[GnuPG](https://www.gnupg.org/).  The encrypted directory can be backed-up
+to untrusted storage using your regular backup solution.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+If you plan to build an application embedding SecureArchive, add this line to
+your application's Gemfile:
 
 ```ruby
 gem 'secure_archive'
@@ -14,13 +20,18 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+If you plan to use the `gpg-archiver` utility, simply run:
 
     $ gem install secure_archive
 
 ## Usage
 
-TODO: Write usage instructions here
+The `gpg-archiver` utility requires at least a GnuPG recipient (provided using the `-r` argument), followed by the source and target directories.  If the source directory has a trailing `/`, the directory content (and not the directory itself) will be archived, so the following commands are equivalent:
+
+~~~
+gpg-archiver -r user@example.com /var/www/example.com/uploads  /var/backup/example.com
+gpg-archiver -r user@example.com /var/www/example.com/uploads/ /var/backup/example.com/uploads
+~~~
 
 ## Contributing
 
