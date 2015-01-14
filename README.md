@@ -1,4 +1,4 @@
-# SecureArchive
+# SecureArchive [![Build Status](https://travis-ci.org/sante-link/secure_archive.svg?branch=master)](https://travis-ci.org/sante-link/secure_archive)
 
 Need to backup a tree of files but can't trust the storage?
 
